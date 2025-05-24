@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  flutter_test:
+  flutter_ci:
     name: Run flutter analyze, test, build APK and release
     runs-on: ubuntu-latest
     steps:
@@ -58,5 +58,6 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: flutter_application_1/build/app/outputs/flutter-apk/app-release.apk
+          tag_name: v1.0.${{ github.run_number }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
