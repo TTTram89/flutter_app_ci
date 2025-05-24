@@ -8,7 +8,7 @@ on:
 
 jobs:
   flutter_test:
-    name: Run flutter analyze, test, and build APK
+    name: Run flutter analyze, test, build APK and release
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -17,7 +17,7 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v1
         with:
-          java-version: "12.x"
+          java-version: "17"
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v1
@@ -40,8 +40,23 @@ jobs:
         run: flutter build apk --release
         working-directory: ./flutter_application_1
 
-      - name: Upload APK
+      - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: release-apk
           path: flutter_application_1/build/app/outputs/flutter-apk/app-release.apk
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v1.0.${{ github.run_number }}
+          name: Release v1.0.${{ github.run_number }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload APK to Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: flutter_application_1/build/app/outputs/flutter-apk/app-release.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
