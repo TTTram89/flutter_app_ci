@@ -1,0 +1,38 @@
+# File: .github/workflows/ci.yml
+# Mục tiêu: Tự động chạy "flutter analyze" và "flutter test" khi có pull request lên nhánh master
+
+name: Flutter CI
+
+# Khi nào workflow sẽ chạy?
+on:
+  pull_request:
+    branches:
+      - master # Chạy khi có pull request vào nhánh master
+
+jobs:
+  flutter_test:
+    name: Run flutter test and analyze
+    runs-on: ubuntu-latest # Sử dụng máy ảo Ubuntu mới nhất
+
+    steps:
+      # Bước 1: Lấy code từ repo về
+      - uses: actions/checkout@v2
+
+      # Bước 2: Cài đặt Java (cần cho Flutter)
+      - uses: actions/setup-java@v1
+        with:
+          java-version: "12.x"
+
+      # Bước 3: Cài đặt Flutter
+      - uses: subosito/flutter-action@v1
+        with:
+          channel: "stable" # Dùng kênh stable của Flutter
+
+      # Bước 4: Lấy các package cần thiết
+      - run: flutter pub get
+
+      # Bước 5: Phân tích code để kiểm tra lỗi
+      - run: flutter analyze
+
+      # Bước 6: Chạy test
+      - run: flutter test
